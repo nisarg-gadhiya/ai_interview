@@ -6,10 +6,14 @@ import { FcGoogle } from "react-icons/fc";
 import { signInWithPopup } from 'firebase/auth';
 import { provider } from '../utils/firebase';
 import { auth } from '../utils/firebase';
-import { serverUrl } from '../App';
+import { serverUrl } from '../utils/serverUrl';
 import axios from 'axios';
+import { useDispatch } from 'react-redux';
+import { setUserData } from '../redux/userSlice';
 
 const Auth = () => {
+
+  const dispatch = useDispatch()
 
   const handleGoogleAuth = async () => {
     try {
@@ -19,13 +23,10 @@ const Auth = () => {
       let email = User.email;
 
       const result = await axios.post(serverUrl + "/api/auth/google" , {name,email} , {withCredentials:true})
-      console.log(result.data);
+      dispatch(setUserData(result.data))
     } catch (error) {
-      if (error.code === "auth/popup-closed-by-user") {
-        console.log("User closed the popup");
-      } else {
-        console.error(error);
-      }
+      console.error("Google Authentication Error:", error);
+      dispatch(setUserData(null))
     }
   };
 
