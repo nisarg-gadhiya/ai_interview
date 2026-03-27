@@ -11,6 +11,7 @@ import { serverUrl } from "../utils/serverUrl.js";
 import axios from 'axios';
 import { useDispatch } from 'react-redux';
 import { setUserData } from '../redux/userSlice.js';
+import AuthModel from './AuthModel.jsx';
 const Navbar = () => {
 
     const {userData} = useSelector((state)=>state.user)
@@ -18,6 +19,7 @@ const Navbar = () => {
     const [showUserPopup, setShowUserPopup] = useState(false)
     const navigate = useNavigate()
     const dispatch = useDispatch()
+    const [showAuthModel, setShowAuthModel] = useState(false)
 
     const handleLogout = async ()=>{
         try{
@@ -45,7 +47,10 @@ const Navbar = () => {
             </div>
 
             <div className='flex items-center gap-6 relative'>
-                <button onClick={()=>{setShowCreditPopup(!showCreditPopup); setShowUserPopup(false)}} className='flex items-center gap-2 bg-gray-100 px-4 py-2 rounded-full text-md hover:bg-gray-200 transition'>
+                <button onClick={()=>{if(!userData){
+                        setShowAuthModel(true)
+                        return
+                } setShowCreditPopup(!showCreditPopup); setShowUserPopup(false)}} className='flex items-center gap-2 bg-gray-100 px-4 py-2 rounded-full text-md hover:bg-gray-200 transition'>
                     <BsCoin size={20} />
                     {userData?.credits || 0}
                 </button>
@@ -61,7 +66,10 @@ const Navbar = () => {
             </div>
 
             <div className='relative'>
-                <button onClick={()=>{setShowUserPopup(!showUserPopup); setShowCreditPopup(false)}} className='w-9 h-9 bg-black text-white rounded-full flex items-center justify-center font-semibold'>
+                <button onClick={()=>{if(!userData){
+                        setShowAuthModel(true)
+                        return
+                } setShowUserPopup(!showUserPopup); setShowCreditPopup(false)}} className='w-9 h-9 bg-black text-white rounded-full flex items-center justify-center font-semibold'>
                     {userData?.name?.charAt(0)?.toUpperCase() || <FaUserAstronaut size={16} />}
                 </button>
 
@@ -81,6 +89,10 @@ const Navbar = () => {
                 }
             </div>
         </motion.div>
+
+        {
+            showAuthModel && <AuthModel onClose={()=>setShowAuthModel(false)}/>
+        }
 
     </div>
     

@@ -16,16 +16,19 @@ function App() {
   useEffect(()=>{
     const getUser = async () =>{
       try {
-        const result = await axios.get(serverUrl + "/api/user/current-user", { withCredentials: true })
-        dispatch(setUserData(result.data))
+        // Check if token exists in cookies before making the request
+        const cookies = document.cookie.split(';').map(c => c.trim())
+        const hasToken = cookies.some(c => c.startsWith('token='))
+        
+        if (hasToken) {
+          const result = await axios.get(serverUrl + "/api/user/current-user", { withCredentials: true })
+          dispatch(setUserData(result.data))
+        } else {
+          dispatch(setUserData(null))
+        }
       }
       catch (error) {
-        // 401 Unauthorized means user is not logged in, which is expected on first load
-        if (error.response?.status === 401) {
-          console.log("User not authenticated")
-        } else {
-          console.log("Error fetching user:", error.message)
-        }
+        console.log("Error fetching user:", error.message)
         dispatch(setUserData(null))
       }
       finally {
@@ -41,7 +44,7 @@ function App() {
 
   return (
     <Routes>
-      <Route path="/" element={userData ? <Home /> : <Navigate to="/auth" />} />
+      <Route path="/" element={<Home />} />
       <Route path="/auth" element={userData ? <Navigate to="/" /> : <Auth/>} />
     </Routes>
   )
