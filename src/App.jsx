@@ -6,6 +6,7 @@ import axios from "axios"
 import { useDispatch, useSelector } from "react-redux"
 import { setUserData } from "./redux/userSlice"
 import { serverUrl } from "./utils/serverUrl"
+import InterviewPage from "./pages/InterviewPage.jsx"
 
 function App() {
 
@@ -46,6 +47,7 @@ function App() {
     <Routes>
       <Route path="/" element={<Home />} />
       <Route path="/auth" element={userData ? <Navigate to="/" /> : <Auth/>} />
+      <Route path="/interview" element={<InterviewPage />} />
     </Routes>
   )
 }
